@@ -2,12 +2,12 @@ from conans import ConanFile
 from conans import AutoToolsBuildEnvironment
 
 class MLXWrapperConan(ConanFile):
-    name = "minilibx_wrapper"
+    name = "yaxi"
     version = "1.0"
     license = "MIT"
     author = "agagniere sid.xxdzs@gmail.com"
     url = "https://github.com/agagniere/FDF"
-    description = " framework"
+    description = "Yet Another X11 Interface"
     topics = ("x11")
     settings = ("os", "compiler", "arch")
     options = {
@@ -42,8 +42,8 @@ class MLXWrapperConan(ConanFile):
 
     def package(self):
         self.copy("*.h", dst="include", src="include")
-        self.copy("libmlxwrap.a", dst="lib")
-        self.copy("libmlxwrap.so", dst="lib")
+        self.copy("libyaxi.a", dst="lib")
+        self.copy("libyaxi.so", dst="lib")
 
     def package_info(self):
-        self.cpp_info.libs = ["mlxwrap"]
+        self.cpp_info.libs = ["yaxi"]

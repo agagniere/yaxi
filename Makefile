@@ -4,7 +4,7 @@ CACHE_PATH  := cache
 HEADER_PATH := include
 
 # Files
-NAME          := mlxwrap
+NAME          := yaxi
 TARGET_STATIC := lib$(NAME).a
 TARGET_SHARED := lib$(NAME).so
 FILES         := $(shell find $(SOURCE_PATH) -name '*.c')
