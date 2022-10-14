@@ -15,17 +15,6 @@ CC       ?= gcc
 CFLAGS   += -Wall -Wextra
 CPPFLAGS += -I $(HEADER_PATH)
 
-# ========== Conan ==========
-CONAN_BUILD_INFO = conanbuildinfo.mak
-include $(wildcard $(CONAN_BUILD_INFO))
-
-CFLAGS   += $(CONAN_CFLAGS)
-CPPFLAGS += $(addprefix -I, $(CONAN_INCLUDE_DIRS))
-CPPFLAGS += $(addprefix -D, $(CONAN_DEFINES))
-LDFLAGS  += $(addprefix -L, $(CONAN_LIB_DIRS))
-LDLIBS   += $(addprefix -l, $(CONAN_LIBS))
-# ===========================
-
 static: $(TARGET_STATIC)
 
 shared: $(TARGET_SHARED)
