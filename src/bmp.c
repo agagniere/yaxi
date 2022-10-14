@@ -1,81 +1,79 @@
 #include "bmp.h"
 
+#include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 
-const int BYTES_PER_PIXEL = 4;
-const int FILE_HEADER_SIZE = 14;
-const int INFO_HEADER_SIZE = 40;
+enum compression
+{
+	BI_RGB            = 0,
+	BI_BITFIELDS      = 3,
+	BI_ALPHABITFIELDS = 6
+};
 
-static unsigned char *createBitmapFileHeader(int height, int stride) {
-	int fileSize = FILE_HEADER_SIZE + INFO_HEADER_SIZE + (stride * height);
+typedef uint32_t compression_t;
 
-	static unsigned char fileHeader[] = {
-		0, 0,       /// signature
-		0, 0, 0, 0, /// image file size in bytes
-		0, 0, 0, 0, /// reserved
-		0, 0, 0, 0, /// start of pixel array
-	};
+struct file_header
+{
+	char     signature[2];
+	uint32_t file_size;
+	uint32_t reserved;
+	uint32_t offset;
+} __attribute__((packed));
 
-	fileHeader[0] = (unsigned char)('B');
-	fileHeader[1] = (unsigned char)('M');
-	fileHeader[2] = (unsigned char)(fileSize);
-	fileHeader[3] = (unsigned char)(fileSize >> 8);
-	fileHeader[4] = (unsigned char)(fileSize >> 16);
-	fileHeader[5] = (unsigned char)(fileSize >> 24);
-	fileHeader[10] = (unsigned char)(FILE_HEADER_SIZE + INFO_HEADER_SIZE);
+struct info_header
+{
+	uint32_t      header_size;
+	int32_t       width;
+	int32_t       height;
+	uint16_t      color_planes;
+	uint16_t      bits_per_pixel;
+	compression_t compression;
+	uint32_t      image_size;
+	int32_t       horizontal_resolution;
+	int32_t       vertical_resolution;
+	uint32_t      palette_size;
+	uint32_t      important_colors;
+};
 
-	return fileHeader;
+const unsigned bytes_per_pixel   = 4;
+const size_t   total_header_size = sizeof(struct file_header) + sizeof(struct info_header);
+
+static struct file_header file_header(unsigned stride, unsigned height)
+{
+	return (struct file_header){.signature = "BM",
+	                            .file_size = total_header_size + (stride * height),
+	                            .offset    = total_header_size};
 }
 
-static unsigned char *createBitmapInfoHeader(int height, int width) {
-	static unsigned char infoHeader[] = {
-		0, 0, 0, 0, /// header size
-		0, 0, 0, 0, /// image width
-		0, 0, 0, 0, /// image height
-		0, 0,       /// number of color planes
-		0, 0,       /// bits per pixel
-		0, 0, 0, 0, /// compression
-		0, 0, 0, 0, /// image size
-		0, 0, 0, 0, /// horizontal resolution
-		0, 0, 0, 0, /// vertical resolution
-		0, 0, 0, 0, /// colors in color table
-		0, 0, 0, 0, /// important color count
-	};
-
-	infoHeader[0] = (unsigned char)(INFO_HEADER_SIZE);
-	infoHeader[4] = (unsigned char)(width);
-	infoHeader[5] = (unsigned char)(width >> 8);
-	infoHeader[6] = (unsigned char)(width >> 16);
-	infoHeader[7] = (unsigned char)(width >> 24);
-	infoHeader[8] = (unsigned char)(height);
-	infoHeader[9] = (unsigned char)(height >> 8);
-	infoHeader[10] = (unsigned char)(height >> 16);
-	infoHeader[11] = (unsigned char)(height >> 24);
-	infoHeader[12] = (unsigned char)(1);
-	infoHeader[14] = (unsigned char)(BYTES_PER_PIXEL * 8);
-
-	return infoHeader;
+/* Height can be negative to signify a top-down order of rows */
+static struct info_header info_header(unsigned width, int height)
+{
+	return (struct info_header){.header_size    = sizeof(struct info_header),
+	                            .width          = width,
+	                            .height         = height,
+	                            .color_planes   = 1,
+	                            .bits_per_pixel = (bytes_per_pixel << 3),
+	                            .compression    = BI_RGB};
 }
 
-bool generateBitmapImage(const unsigned char* image, int height, int width, const char* imageFileName) {
-	int widthInBytes = width * BYTES_PER_PIXEL;
-	unsigned char padding[3] = {0, 0, 0};
-	int paddingSize = (4 - (widthInBytes) % 4) % 4;
-	int stride = (widthInBytes) + paddingSize;
-	FILE *imageFile = fopen(imageFileName, "wb");
-	unsigned char *fileHeader = createBitmapFileHeader(height, stride);
-	unsigned char *infoHeader = createBitmapInfoHeader(height, width);
-	int i;
+void write_rgb_bitmap_to_file(const unsigned char* image, unsigned width, unsigned height, FILE* image_file)
+{
+	unsigned           stride     = width * bytes_per_pixel;
+	struct file_header fileheader = file_header(stride, height);
+	struct info_header infos      = info_header(width, -height);
 
-	if (imageFile == NULL)
+	fwrite(&fileheader, sizeof(fileheader), 1, image_file);
+	fwrite(&infos, sizeof(infos), 1, image_file);
+	fwrite(image, stride, height, image_file);
+}
+
+bool write_rgb_bitmap(const unsigned char* image, unsigned width, unsigned height, const char* image_file_name)
+{
+	FILE* image_file = fopen(image_file_name, "wb");
+
+	if (image_file == NULL)
 		return false;
-	fwrite(fileHeader, 1, FILE_HEADER_SIZE, imageFile);
-	fwrite(infoHeader, 1, INFO_HEADER_SIZE, imageFile);
-	i = height;
-	while (i --> 0)
-	{
-		fwrite(image + (i * widthInBytes), BYTES_PER_PIXEL, width, imageFile);
-		fwrite(padding, 1, paddingSize, imageFile);
-	}
-	return fclose(imageFile) == 0;
+	write_rgb_bitmap_to_file(image, width, height, image_file);
+	return fclose(image_file) == 0;
 }
