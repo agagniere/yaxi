@@ -117,7 +117,6 @@ enum e_key
 	KEY_RightArrow     = 0x7C,
 	KEY_DownArrow      = 0x7D,
 	KEY_UpArrow        = 0x7E,
-	KEY_MAX            = 0xFFFF
 
 #else
 
@@ -176,8 +175,9 @@ enum e_key
 	KEY_Escape      = 0xff1b,
 	KEY_KeypadPlus  = 0xffab,
 	KEY_KeypadMinus = 0xffad,
-	KEY_MAX         = 0xFFFF
 
 #endif
+
+	KEY_MAX            = 0xFFFF
 
 };
