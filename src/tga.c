@@ -53,13 +53,21 @@ const unsigned bytes_per_pixel = 4;
 
 void TGA_write_argb_image_to_file(const unsigned char* image, unsigned width, unsigned height, FILE* image_file)
 {
-	struct header header
-	= {.image_type = TRUE_COLOR,
-	   .image_spec = {.width          = width,
-	                  .height         = height,
-	                  .bits_per_pixel = 32,
-	                  .image_descriptor
-	                  = {.attribute_bits_count = 8, .origin_is_upper_left = 1}}};
+	struct header header =
+	{
+		.image_type = TRUE_COLOR,
+		.image_spec =
+		{
+			.width            = width,
+			.height           = height,
+			.bits_per_pixel   = 32,
+			.image_descriptor =
+			{
+				.attribute_bits_count = 8,
+				.origin_is_upper_left = 1
+			}
+		}
+	};
 
 	fwrite(&header, sizeof(header), 1, image_file);
 	fwrite(image, width * bytes_per_pixel, height, image_file);
@@ -74,4 +82,3 @@ bool TGA_write_argb_image(const unsigned char* image, unsigned width, unsigned h
 	TGA_write_argb_image_to_file(image, width, height, image_file);
 	return fclose(image_file) == 0;
 }
-
