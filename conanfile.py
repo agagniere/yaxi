@@ -4,7 +4,7 @@ from conan.errors import ConanInvalidConfiguration
 
 class MLXWrapperConan(ConanFile):
     name = "yaxi"
-    version = "1.0"
+    version = "1.2"
     license = "MIT"
     author = "agagniere sid.xxdzs@gmail.com"
     url = "https://github.com/agagniere/yaxi"
@@ -50,6 +50,7 @@ class MLXWrapperConan(ConanFile):
         toolchain.extra_cflags += [f"-O{self.options.optimisation}", "-Wall", "-Wextra"]
         if self.options.debug:
             toolchain.extra_cflags += ["-g"]
+        toolchain.make_args += [f"YAXI_BACKEND={self.options.backend}"]
         toolchain.generate()
         AutotoolsDeps(self).generate()
 

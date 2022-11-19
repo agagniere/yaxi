@@ -1,6 +1,6 @@
 #pragma once
 
-#include "point.h"
+#include "yaxi/point.h"
 
 #include <ft_array.h>
 #include <libft.h>

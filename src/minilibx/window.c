@@ -1,4 +1,4 @@
-#include "mlx_wrapper.h"
+#include "yaxi/yaxi.h"
 
 #include <libft.h>
 #include <mlx.h>

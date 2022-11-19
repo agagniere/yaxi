@@ -1,6 +1,5 @@
-#include "mlx_wrapper.h"
+#include "yaxi/yaxi.h"
 
-#include <ft_printf.h>
 #include <stdbool.h>
 
 bool is_in_frame(t_window* win, unsigned x, unsigned y)

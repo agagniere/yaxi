@@ -1,3 +1,5 @@
+#include "image_formats/tga.h"
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>

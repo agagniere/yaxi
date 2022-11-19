@@ -1,4 +1,4 @@
-#include "bmp.h"
+#include "image_formats/bmp.h"
 
 #include <stdbool.h>
 #include <stdint.h>
