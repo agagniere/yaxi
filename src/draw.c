@@ -7,12 +7,14 @@ bool is_in_frame(t_window* win, unsigned x, unsigned y)
 	return x < win->dim.x && y < win->dim.y;
 }
 
-void set_pixel(t_window* win, unsigned x, unsigned y, int color)
+bool set_pixel(t_window* win, unsigned x, unsigned y, int color)
 {
 	int* whole_pixels = (int*)win->pixels;
 
-	if (is_in_frame(win, x, y))
-		whole_pixels[win->dim.x * y + x] = color;
+	if (!is_in_frame(win, x, y))
+		return false;
+	whole_pixels[win->dim.x * y + x] = color;
+	return true;
 }
 
 bool draw_line(t_window* win, t_point2_int from, t_point2_int to, int color)

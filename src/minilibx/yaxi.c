@@ -2,12 +2,12 @@
 
 #include <mlx.h>
 
-void* init_yaxi()
-{
-	return mlx_init();
-}
+#include <stdlib.h>
 
-void cleanup_yaxi(void** yaxi)
+t_yaxi yaxi_init() { return mlx_init(); }
+
+void yaxi_free(t_yaxi* yaxi)
 {
 	mlx_destroy_display(*yaxi);
+	free(*yaxi);
 }

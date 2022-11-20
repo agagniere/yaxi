@@ -33,7 +33,7 @@ $(TARGET_SHARED): $(OBJECTS)
 	$(CC) -shared $(CFLAGS) -o $@ $^ $(LDFLAGS) $(LDLIBS)
 
 $(CACHE_PATH)/%.o: $(SOURCE_PATH)/%.c | $(CACHE_PATH)
-	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -MMD -c $< -o $@
 
 $(CACHE_PATH):
 	mkdir -p $(CACHE_SUBS)

@@ -3,6 +3,7 @@
 #include "yaxi/point.h"
 
 #include <ft_array.h>
+#include <ft_prepro/raii.h>
 #include <libft.h>
 
 #include <stdbool.h>
@@ -10,11 +11,18 @@
 
 typedef struct window t_window;
 typedef struct hooks  t_hooks;
+typedef void*         t_yaxi;
+typedef int         (*t_fnct)();
 
-typedef int (*t_fnct)();
+RAII_DECLARE_TYPE(t_yaxi);
+RAII_DECLARE_TYPE(t_window);
+
+#define Yaxi   RAII(t_yaxi)
+#define Window RAII(t_window)
 
 struct hooks
 {
+	t_fnct loop;
 	t_fnct expose;
 	t_fnct repaint;
 	t_fnct key_press;
@@ -63,13 +71,18 @@ struct window
         .endian        = 0                                          \
     }
 
-void* init_yaxi();
-void  cleanup_yaxi(void** yaxi);
+t_yaxi yaxi_new();
+void   yaxi_free(t_yaxi* yaxi);
+bool   yaxi_loop();
 
-bool make_window(t_window* out_win, void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
-void cleanup_window(t_window* win);
+t_window* window_new(void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
+void      window_free(t_window* win);
+bool      window_init(t_window* out_win, void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
+bool      window_clear(t_window* win);
 
 bool draw_line(t_window* win, t_point2_int from, t_point2_int to, int color);
-void set_pixel(t_window* win, unsigned x, unsigned y, int color);
-
+bool set_pixel(t_window* win, unsigned x, unsigned y, int color);
 bool is_in_frame(t_window* win, unsigned x, unsigned y);
+
+#define cleanup_t_yaxi   yaxi_free
+#define cleanup_t_window window_free
