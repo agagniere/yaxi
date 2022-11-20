@@ -33,7 +33,7 @@ class MLXWrapperConan(ConanFile):
             "wayland":  "wayland/1.21.0",
             "xlib":     "xorg/system",
             "xcb":      "xorg/system",
-            "minilibx": "minilibx/1.3"
+            "minilibx": "minilibx/master@42Paris/github"
         }
         if str(self.options.backend) in dependency:
             self.requires(dependency[str(self.options.backend)])

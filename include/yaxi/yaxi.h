@@ -4,6 +4,7 @@
 
 #include <ft_array.h>
 #include <libft.h>
+
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -62,8 +63,11 @@ struct window
         .endian        = 0                                          \
     }
 
-bool make_window(t_window* out_win, void* mlx, t_dimension dim, const char* name, t_hooks hooks);
-void free_window(t_window* win);
+void* init_yaxi();
+void  cleanup_yaxi(void** yaxi);
+
+bool make_window(t_window* out_win, void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
+void cleanup_window(t_window* win);
 
 bool draw_line(t_window* win, t_point2_int from, t_point2_int to, int color);
 void set_pixel(t_window* win, unsigned x, unsigned y, int color);
