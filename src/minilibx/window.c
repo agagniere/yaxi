@@ -3,6 +3,12 @@
 #include <mlx.h>
 #include <stdlib.h>
 
+int default_expose(t_window* win)
+{
+	mlx_put_image_to_window(win->mlx_ptr, win->mlx_win, win->mlx_img, 0, 0);
+	return 0;
+}
+
 bool window_init(t_window* out, t_yaxi yaxi, t_dimension dim, const char* name, t_hooks hooks)
 {
 	out->dim     = dim;
@@ -40,8 +46,9 @@ bool window_clear(t_window* win)
 	return true;
 }
 
-void window_free(t_window* win)
+void window_free(t_window** win)
 {
-	window_clear(win);
-	free(win);
+	window_clear(*win);
+	free(*win);
+	*win = NULL;
 }

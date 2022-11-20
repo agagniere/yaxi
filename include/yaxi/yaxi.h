@@ -18,7 +18,7 @@ RAII_DECLARE_TYPE(t_yaxi);
 RAII_DECLARE_TYPE(t_window);
 
 #define Yaxi   RAII(t_yaxi)
-#define Window RAII(t_window)
+#define Window RAII(t_window)*
 
 struct hooks
 {
@@ -30,6 +30,7 @@ struct hooks
 	t_fnct mouse_click;
 	t_fnct mouse_move;
 	t_fnct mouse_drag;
+	t_fnct destroy;
 };
 
 struct window
@@ -45,44 +46,26 @@ struct window
 	int         endian;
 };
 
-#define NO_HOOKS                                                    \
-    (struct hooks)                                                  \
-    {                                                               \
-        .expose      = NULL,                                        \
-        .repaint     = NULL,                                        \
-        .key_press   = NULL,                                        \
-        .key_release = NULL,                                        \
-        .mouse_click = NULL,                                        \
-        .mouse_move  = NULL,                                        \
-        .mouse_drag  = NULL                                         \
-    }
+#define DEFAULT_HOOKS \
+	(struct hooks) { .expose = default_expose, .destroy = window_clear }
 
-#define NEW_WINDOW                                                  \
-    (struct window)                                                 \
-    {                                                               \
-        .hooks         = NO_HOOKS,                                  \
-        .mlx_ptr       = NULL,                                      \
-        .mlx_win       = NULL,                                      \
-        .mlx_img       = NULL,                                      \
-        .pixels        = NULL,                                      \
-        .dim           = {0, 0},                                    \
-        .bit_per_pixel = 0,                                         \
-        .line_size     = 0,                                         \
-        .endian        = 0                                          \
-    }
+#define NEW_WINDOW \
+	(struct window) { .hooks = DEFAULT_HOOKS }
 
 t_yaxi yaxi_new();
-void   yaxi_free(t_yaxi* yaxi);
-bool   yaxi_loop();
+void   yaxi_free(t_yaxi*);
+bool   yaxi_loop(t_yaxi);
 
 t_window* window_new(void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
-void      window_free(t_window* win);
+void      window_free(t_window**);
 bool      window_init(t_window* out_win, void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
-bool      window_clear(t_window* win);
+bool      window_clear(t_window*);
 
 bool draw_line(t_window* win, t_point2_int from, t_point2_int to, int color);
 bool set_pixel(t_window* win, unsigned x, unsigned y, int color);
 bool is_in_frame(t_window* win, unsigned x, unsigned y);
+
+int default_expose(t_window*);
 
 #define cleanup_t_yaxi   yaxi_free
 #define cleanup_t_window window_free
