@@ -54,12 +54,12 @@ struct window
 
 t_yaxi yaxi_new();
 void   yaxi_free(t_yaxi*);
-bool   yaxi_loop(t_yaxi);
 
-t_window* window_new(void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
-void      window_free(t_window**);
-bool      window_init(t_window* out_win, void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
+// t_window* window_new(void* yaxi, t_dimension dim, const char* name, t_hooks hooks);
+// void      window_free(t_window**);
+bool      window_init(t_window* out_win, t_yaxi yaxi, t_dimension dim, const char* name, t_hooks hooks);
 bool      window_clear(t_window*);
+bool      window_show(t_window*);
 
 bool draw_line(t_window* win, t_point2_int from, t_point2_int to, int color);
 bool set_pixel(t_window* win, unsigned x, unsigned y, int color);

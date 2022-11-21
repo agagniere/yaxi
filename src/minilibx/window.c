@@ -24,6 +24,10 @@ bool window_init(t_window* out, t_yaxi yaxi, t_dimension dim, const char* name, 
 		mlx_expose_hook(out->mlx_win, hooks.expose, out);
 	if (hooks.key_press)
 		mlx_key_hook(out->mlx_win, hooks.key_press, out);
+	if (hooks.loop)
+		mlx_loop_hook(out->mlx_ptr, hooks.loop, out);
+	if (hooks.destroy)
+		mlx_hook(out->mlx_win, 17, 0, hooks.destroy, out);
 	return true;
 }
 
@@ -51,4 +55,14 @@ void window_free(t_window** win)
 	window_clear(*win);
 	free(*win);
 	*win = NULL;
+}
+
+bool window_show(t_window* win)
+{
+	if (win->hooks.repaint)
+		win->hooks.repaint(win);
+	if (win->hooks.expose)
+		win->hooks.expose(win);
+	mlx_loop(win->mlx_ptr);
+	return true;
 }
